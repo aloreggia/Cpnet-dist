@@ -1,0 +1,46 @@
+#!/bin/sh
+### job name
+#PBS -N cpNet_train
+
+### Programma non-rerunable
+#PBS -r n
+
+### Manda un'e-mail a esecuzione terminata:
+#PBS -m ae
+#PBS -M andrea.loreggia@gmail.com
+
+### Redirezione dello standard output e standard error del programma
+#PBS -e localhost:${HOME}/cpnet/new_exp/nn_train.err
+#PBS -o localhost:${HOME}/cpnet/new_exp/nn_train.out
+
+### Scelta della coda "cuda"
+#PBS -q cuda
+
+### Numero di host (nodes) occupati dal Job e numero di processi da allocare per nodo (ppn)
+#PBS -l nodes=1:ppn=1:cluster_cuda
+
+### Memoria che ci si aspetta che il programma utilizzi
+#PBS -l mem=10g
+
+### Limite di tempo che vogliamo assegnare al nostro job
+#PBS -l walltime=300:00:00
+
+###
+### Mi sposto nella directory di lavoro
+cd ${HOME}/yelp
+
+### Alcuni comandi di shell che ci spostano nella nostra directory e stampano lo stato 
+### del sistema prima dell'esecuzione
+echo Host di esecuzione: `hostname`
+echo Data: `date`
+echo Directory: `pwd`
+echo Questo job viene eseguito sui seguenti nodi:
+echo `cat $PBS_NODEFILE`
+echo PBS_WORKDIR=$PBS_WORKDIR
+
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
+#export PYTHONPATH=$PYTHONPATH:/home/aloreggi/anaconda/bin/
+
+### Esecuzione del nostro programma
+/home/aloreggi/anaconda3/bin/python /home/aloreggi/cpnet/new_exp/createFiles_smart.py
+
